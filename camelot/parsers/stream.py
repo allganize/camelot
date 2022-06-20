@@ -133,6 +133,8 @@ class Stream(BaseParser):
                     row_y = t.y0
                 temp.append(t)
 
+        if not temp:
+            return []
         rows.append(sorted(temp, key=lambda t: t.x0))
         if len(rows) > 1:
             __ = rows.pop(0)  # TODO: hacky
@@ -463,6 +465,8 @@ class Stream(BaseParser):
             cols, rows = self._generate_columns_and_rows(table_idx, tk)
             table = self._generate_table(table_idx, cols, rows)
             table._bbox = tk
-            _tables.append(table)
+
+            if any("".join(s.strip() for s in d).strip() for d in table.data):
+                _tables.append(table)
 
         return _tables
