@@ -1,35 +1,23 @@
 # -*- coding: utf-8 -*-
 
-import os
-import sys
 import copy
 import locale
 import logging
+import os
+import sys
 import warnings
 
 import numpy as np
 import pandas as pd
 
-from .base import BaseParser
-from ..core import Table
-from ..utils import (
-    scale_image,
-    scale_pdf,
-    segments_in_bbox,
-    text_in_bbox,
-    merge_close_lines,
-    get_table_index,
-    compute_accuracy,
-    compute_whitespace,
-)
-from ..image_processing import (
-    adaptive_threshold,
-    find_lines,
-    find_contours,
-    find_joints,
-)
 from ..backends.image_conversion import BACKENDS
-
+from ..core import Table
+from ..image_processing import (adaptive_threshold, find_contours, find_joints,
+                                find_lines)
+from ..utils import (compute_accuracy, compute_whitespace, get_table_index,
+                     merge_close_lines, scale_image, scale_pdf,
+                     segments_in_bbox, text_in_bbox)
+from .base import BaseParser
 
 logger = logging.getLogger("camelot")
 
@@ -428,6 +416,11 @@ class Lattice(BaseParser):
             sorted(self.table_bbox.keys(), key=lambda x: x[1], reverse=True)
         ):
             cols, rows, v_s, h_s = self._generate_columns_and_rows(table_idx, tk)
+
+            if not cols or not rows:
+                logger.debug("No cols and rows generated for table_idx <%d>", table_idx)
+                continue
+
             table = self._generate_table(table_idx, cols, rows, v_s=v_s, h_s=h_s)
             table._bbox = tk
             _tables.append(table)
