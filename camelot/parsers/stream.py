@@ -94,6 +94,9 @@ class Stream(BaseParser):
             Tuple (x0, y0, x1, y1) in pdf coordinate space.
 
         """
+        if all(len(t) == 0 for direction in t_bbox for t in t_bbox[direction]):
+            return (0, 0, 0, 0)
+
         xmin = min([t.x0 for direction in t_bbox for t in t_bbox[direction]])
         ymin = min([t.y0 for direction in t_bbox for t in t_bbox[direction]])
         xmax = max([t.x1 for direction in t_bbox for t in t_bbox[direction]])
